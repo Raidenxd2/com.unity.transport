@@ -548,7 +548,11 @@ namespace Unity.Networking.Transport
             if (error.code != ErrorCode.Success)
             {
                 if (error.code == Binding.Baselib_ErrorCode.AddressInUse)
-                    Debug.LogError($"Failed to bind UDP socket because the address is already in use. Likely because there is another process using port {endpoint.Port}.");
+                {
+                    string message = $"Failed to bind UDP socket because the address is already in use. Likely because there is another process using port {endpoint.Port}.";
+                    Debug.LogError(message);
+                    DebugLogPrev.prevLog = message;
+                } 
                 else
                     Debug.LogError($"Baselib operation failed. Failed to create UDP socket. (error {(int)error.code}: {GetBaselibErrorMessage(error)})");
                 return (int)Error.StatusCode.NetworkSocketError;
@@ -701,6 +705,11 @@ namespace Unity.Networking.Transport
 
             return errorMessage;
         }
+    }
+    
+    public static class DebugLogPrev
+    {
+        public static string prevLog;
     }
 }
 #endif // !UNITY_WEBGL || UNITY_EDITOR
